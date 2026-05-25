@@ -1,0 +1,78 @@
+```sql
+USE company;
+```
+
+```sql
+CREATE TABLE CUSTOMERS (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100),
+    AGE INT,
+    ADDRESS VARCHAR(255),
+    SALARY DECIMAL(10,2)
+);
+```
+
+```sql
+DESC CUSTOMERS;
+```
+
+```sql
+DELIMITER //
+```
+
+```sql
+CREATE TRIGGER salary_insert_trigger
+BEFORE INSERT ON CUSTOMERS
+FOR EACH ROW
+BEGIN
+    SET @diff = NEW.SALARY - 0;
+END//
+```
+
+```sql
+CREATE TRIGGER salary_update_trigger
+BEFORE UPDATE ON CUSTOMERS
+FOR EACH ROW
+BEGIN
+    SET @diff = NEW.SALARY - OLD.SALARY;
+END//
+```
+
+```sql
+CREATE TRIGGER salary_delete_trigger
+BEFORE DELETE ON CUSTOMERS
+FOR EACH ROW
+BEGIN
+    SET @diff = OLD.SALARY;
+END//
+```
+
+```sql
+DELIMITER ;
+```
+
+```sql
+INSERT INTO CUSTOMERS
+(ID, NAME, AGE, ADDRESS, SALARY)
+VALUES
+(1, 'John Doe', 36, '123 Main St', 50000);
+```
+
+```sql
+SELECT * FROM CUSTOMERS;
+```
+
+```sql
+UPDATE CUSTOMERS
+SET SALARY = 55000
+WHERE ID = 1;
+```
+
+```sql
+SELECT * FROM CUSTOMERS;
+```
+
+```sql
+DELETE FROM CUSTOMERS
+WHERE ID = 1;
+```
