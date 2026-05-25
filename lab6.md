@@ -1,65 +1,53 @@
 ```sql
-CREATE DATABASE college402;
+USE company_db;
 ```
 
 ```sql
-USE college402;
+DROP TABLE IF EXISTS N_ROLLCALL;
 ```
 
 ```sql
-CREATE TABLE o_rollcall (
-    rno INTEGER(20) PRIMARY KEY,
-    name VARCHAR(20),
-    address VARCHAR(20)
+DROP TABLE IF EXISTS O_ROLLCALL;
+```
+
+```sql
+CREATE TABLE N_ROLLCALL(
+    ID INT,
+    NAME VARCHAR(100),
+    ROLL VARCHAR(100)
 );
 ```
 
 ```sql
-INSERT INTO o_rollcall VALUES (1,'John','Belgavi');
+DESC N_ROLLCALL;
 ```
 
 ```sql
-INSERT INTO o_rollcall VALUES (2,'Smith','Mumbai');
-```
-
-```sql
-INSERT INTO o_rollcall VALUES (3,'Joe','Bangalore');
-```
-
-```sql
-INSERT INTO o_rollcall VALUES (4,'Jack','Delhi');
-```
-
-```sql
-INSERT INTO o_rollcall VALUES (5,'Atharva','Hyderabad');
-```
-
-```sql
-SELECT * FROM o_rollcall;
-```
-
-```sql
-CREATE TABLE n_rollcall (
-    rno INTEGER(20),
-    name VARCHAR(20),
-    address VARCHAR(20)
+CREATE TABLE O_ROLLCALL(
+    ID INT,
+    NAME VARCHAR(100),
+    ROLL VARCHAR(100)
 );
 ```
 
 ```sql
-INSERT INTO n_rollcall VALUES (1,'John','Belgavi');
+DESC O_ROLLCALL;
 ```
 
 ```sql
-INSERT INTO n_rollcall VALUES (2,'Smith','Mumbai');
+INSERT INTO N_ROLLCALL VALUES(123, 'satyal123', '111');
 ```
 
 ```sql
-INSERT INTO n_rollcall VALUES (3,'Joe','Bangalore');
+SELECT * FROM N_ROLLCALL;
 ```
 
 ```sql
-SELECT * FROM n_rollcall;
+INSERT INTO O_ROLLCALL VALUES(123, 'satyal123', '110');
+```
+
+```sql
+SELECT * FROM O_ROLLCALL;
 ```
 
 ```sql
@@ -67,41 +55,56 @@ DELIMITER $$
 ```
 
 ```sql
-CREATE PROCEDURE n1(IN rno1 INT)
+CREATE PROCEDURE ProcessRollcall()
 BEGIN
 
-    DECLARE rno2 INT;
-    DECLARE exit_cond BOOLEAN;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE curr_id INT;
+    DECLARE curr_name VARCHAR(100);
+    DECLARE curr_roll VARCHAR(100);
+    DECLARE v_count INT;
 
-    DECLARE c1 CURSOR FOR
-    SELECT rno FROM o_rollcall WHERE rno > rno1;
+    DECLARE c_new_rollcall CURSOR FOR
+    SELECT id, name, roll FROM N_ROLLCALL;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND
-    SET exit_cond = TRUE;
+    SET done = TRUE;
 
-    OPEN c1;
+    OPEN c_new_rollcall;
 
-    I1 : LOOP
+    read_loop: LOOP
 
-        FETCH c1 INTO rno2;
+        FETCH c_new_rollcall
+        INTO curr_id, curr_name, curr_roll;
 
-        IF NOT EXISTS(
-            SELECT * FROM n_rollcall WHERE rno = rno2
-        ) THEN
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
 
-            INSERT INTO n_rollcall
-            SELECT * FROM o_rollcall WHERE rno = rno2;
+        SELECT COUNT(*) INTO v_count
+        FROM O_ROLLCALL
+        WHERE id = curr_id;
+
+        IF v_count = 0 THEN
+
+            INSERT INTO O_ROLLCALL(id, name, roll)
+            VALUES(curr_id, curr_name, curr_roll);
+
+            SELECT CONCAT('Record inserted: ', curr_id)
+            AS Action_Taken;
+
+        ELSE
+
+            SELECT CONCAT('Record skipped: ', curr_id)
+            AS Action_Taken;
 
         END IF;
 
-        IF exit_cond THEN
-            CLOSE c1;
-            LEAVE I1;
-        END IF;
+    END LOOP;
 
-    END LOOP I1;
+    CLOSE c_new_rollcall;
 
-END $$
+END$$
 ```
 
 ```sql
@@ -109,9 +112,9 @@ DELIMITER ;
 ```
 
 ```sql
-CALL n1(3);
+CALL ProcessRollcall();
 ```
 
 ```sql
-SELECT * FROM n_rollcall;
+SELECT * FROM O_ROLLCALL;
 ```
