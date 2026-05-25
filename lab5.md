@@ -2,8 +2,16 @@
 CREATE DATABASE company402;
 ```
 
+```text
+Query OK, 1 row affected (0.00 sec)
+```
+
 ```sql
 USE company402;
+```
+
+```text
+Database changed
 ```
 
 ```sql
@@ -15,6 +23,10 @@ CREATE TABLE employee (
 );
 ```
 
+```text
+Query OK, 0 rows affected, 2 warnings (0.02 sec)
+```
+
 ```sql
 INSERT INTO employee VALUES
 (101,'John',25,20000),
@@ -24,8 +36,26 @@ INSERT INTO employee VALUES
 (105,'Raj',27,25000);
 ```
 
+```text
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+```
+
 ```sql
 SELECT * FROM employee;
+```
+
+```text
++------+--------+------+--------+
+| E_id | E_name | Age | Salary |
++------+--------+------+--------+
+| 101  | John   | 25  | 20000  |
+| 102  | Sumit  | 28  | 15000  |
+| 103  | Ram    | 30  | 18000  |
+| 104  | Anu    | 27  | 22000  |
+| 105  | Raj    | 27  | 25000  |
++------+--------+------+--------+
+5 rows in set (0.00 sec)
 ```
 
 ```sql
@@ -64,10 +94,53 @@ BEGIN
 END $$
 ```
 
+```text
+Query OK, 0 rows affected (0.00 sec)
+```
+
 ```sql
 DELIMITER ;
 ```
 
 ```sql
 CALL proc_emp();
+```
+
+```text
++---------+-------+
+| v_ename | v_sal |
++---------+-------+
+| John    | 20000 |
++---------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| v_ename | v_sal |
++---------+-------+
+| Sumit   | 15000 |
++---------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| v_ename | v_sal |
++---------+-------+
+| Ram     | 18000 |
++---------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| v_ename | v_sal |
++---------+-------+
+| Anu     | 22000 |
++---------+-------+
+1 row in set (0.00 sec)
+
++---------+-------+
+| v_ename | v_sal |
++---------+-------+
+| Raj     | 25000 |
++---------+-------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
 ```
