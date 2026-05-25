@@ -1,31 +1,38 @@
 ```sql
-CREATE DATABASE company402;
+CREATE DATABASE IF NOT EXISTS company_db;
 ```
 
 ```sql
-USE company402;
+USE company_db;
 ```
 
 ```sql
-CREATE TABLE employee (
-    E_id INT(10) PRIMARY KEY,
-    E_name VARCHAR(20),
-    Age INT(5),
-    Salary FLOAT(10)
+CREATE TABLE Employee (
+    E_id INT PRIMARY KEY,
+    E_name VARCHAR(255),
+    Age INT,
+    Salary DECIMAL(10,2)
 );
 ```
 
 ```sql
-INSERT INTO employee VALUES
-(101,'John',25,20000),
-(102,'Sumit',28,15000),
-(103,'Ram',30,18000),
-(104,'Anu',27,22000),
-(105,'Raj',27,25000);
+DESC Employee;
 ```
 
 ```sql
-SELECT * FROM employee;
+INSERT INTO Employee VALUES (1, 'JOHN', 30, 50000);
+```
+
+```sql
+INSERT INTO Employee VALUES (2, 'JACK', 40, 60000);
+```
+
+```sql
+INSERT INTO Employee VALUES (3, 'SHAM', 50, 70000);
+```
+
+```sql
+SELECT * FROM Employee;
 ```
 
 ```sql
@@ -33,35 +40,44 @@ DELIMITER $$
 ```
 
 ```sql
-CREATE PROCEDURE proc_emp()
+CREATE PROCEDURE GetEmployees()
 BEGIN
-    DECLARE v_ename VARCHAR(20);
-    DECLARE v_sal FLOAT;
-    DECLARE v_finished INTEGER DEFAULT 0;
 
-    DECLARE c1 CURSOR FOR
-    SELECT E_name, Salary FROM employee;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE v_id INT;
+    DECLARE v_name VARCHAR(255);
+    DECLARE v_age INT;
+    DECLARE v_salary DECIMAL(10,2);
+
+    DECLARE employee_cursor CURSOR FOR
+    SELECT E_id, E_name, Age, Salary FROM Employee;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND
-    SET v_finished = 1;
+    SET done = TRUE;
 
-    OPEN c1;
+    OPEN employee_cursor;
 
-    get_emp: LOOP
+    read_loop: LOOP
 
-        FETCH c1 INTO v_ename, v_sal;
+        FETCH employee_cursor
+        INTO v_id, v_name, v_age, v_salary;
 
-        IF v_finished = 1 THEN
-            LEAVE get_emp;
+        IF done THEN
+            LEAVE read_loop;
         END IF;
 
-        SELECT v_ename, v_sal;
+        SELECT CONCAT(
+            'Employee ID: ', v_id,
+            ' Name: ', v_name,
+            ' Age: ', v_age,
+            ' Salary: ', v_salary
+        ) AS Employee_Details;
 
-    END LOOP get_emp;
+    END LOOP;
 
-    CLOSE c1;
+    CLOSE employee_cursor;
 
-END $$
+END$$
 ```
 
 ```sql
@@ -69,5 +85,5 @@ DELIMITER ;
 ```
 
 ```sql
-CALL proc_emp();
+CALL GetEmployees();
 ```
