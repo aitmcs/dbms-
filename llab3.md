@@ -1,120 +1,80 @@
 ```sql
-USE company_db;
+CREATE DATABASE company402;
 ```
 
 ```sql
-DROP TABLE IF EXISTS N_ROLLCALL;
+USE company402;
 ```
 
 ```sql
-DROP TABLE IF EXISTS O_ROLLCALL;
-```
-
-```sql
-CREATE TABLE N_ROLLCALL(
-    ID INT,
-    NAME VARCHAR(100),
-    ROLL VARCHAR(100)
+CREATE TABLE employee (
+    E_id INT(10) PRIMARY KEY,
+    E_name VARCHAR(20) NOT NULL,
+    Age INT(5) NOT NULL,
+    Salary FLOAT(10) NOT NULL
 );
 ```
 
 ```sql
-DESC N_ROLLCALL;
+DESC employee;
 ```
 
 ```sql
-CREATE TABLE O_ROLLCALL(
-    ID INT,
-    NAME VARCHAR(100),
-    ROLL VARCHAR(100)
-);
+INSERT INTO employee VALUES (101,'Atharva',20,35000);
 ```
 
 ```sql
-DESC O_ROLLCALL;
+INSERT INTO employee VALUES (102,'Sultan',18,42000);
 ```
 
 ```sql
-INSERT INTO N_ROLLCALL VALUES(123, 'satyal123', '111');
+INSERT INTO employee VALUES (103,'Shirdhir',24,22000);
 ```
 
 ```sql
-SELECT * FROM N_ROLLCALL;
+INSERT INTO employee VALUES (104,'Aditya',26,50000);
 ```
 
 ```sql
-INSERT INTO O_ROLLCALL VALUES(123, 'satyal123', '110');
+INSERT INTO employee VALUES (105,'Veeresh',21,55000);
 ```
 
 ```sql
-SELECT * FROM O_ROLLCALL;
+SELECT * FROM employee;
 ```
 
 ```sql
-DELIMITER $$
+SELECT COUNT(E_name) FROM employee;
 ```
 
 ```sql
-CREATE PROCEDURE ProcessRollcall()
-BEGIN
-
-    DECLARE done INT DEFAULT FALSE;
-    DECLARE curr_id INT;
-    DECLARE curr_name VARCHAR(100);
-    DECLARE curr_roll VARCHAR(100);
-    DECLARE v_count INT;
-
-    DECLARE c_new_rollcall CURSOR FOR
-    SELECT id, name, roll FROM N_ROLLCALL;
-
-    DECLARE CONTINUE HANDLER FOR NOT FOUND
-    SET done = TRUE;
-
-    OPEN c_new_rollcall;
-
-    read_loop: LOOP
-
-        FETCH c_new_rollcall
-        INTO curr_id, curr_name, curr_roll;
-
-        IF done THEN
-            LEAVE read_loop;
-        END IF;
-
-        SELECT COUNT(*) INTO v_count
-        FROM O_ROLLCALL
-        WHERE id = curr_id;
-
-        IF v_count = 0 THEN
-
-            INSERT INTO O_ROLLCALL(id, name, roll)
-            VALUES(curr_id, curr_name, curr_roll);
-
-            SELECT CONCAT('Record inserted: ', curr_id)
-            AS Action_Taken;
-
-        ELSE
-
-            SELECT CONCAT('Record skipped: ', curr_id)
-            AS Action_Taken;
-
-        END IF;
-
-    END LOOP;
-
-    CLOSE c_new_rollcall;
-
-END$$
+SELECT MAX(Age) FROM employee;
 ```
 
 ```sql
-DELIMITER ;
+SELECT MIN(Age) FROM employee;
 ```
 
 ```sql
-CALL ProcessRollcall();
+SELECT Salary FROM employee ORDER BY Salary;
 ```
 
 ```sql
-SELECT * FROM O_ROLLCALL;
+SELECT Salary FROM employee GROUP BY Salary;
+```
+
+```sql
+SELECT Salary FROM employee ORDER BY Salary DESC;
+```
+
+```sql
+SELECT SUM(Salary) FROM employee;
+```
+
+```sql
+SELECT MAX(Salary) FROM employee;
+```
+
+```sql
+SELECT MIN(Salary) FROM employee;
 ```
